@@ -1,6 +1,6 @@
 NAME = pubnub_test.exe
 
-SRC = pubnub.opp src/plugin/pubnub.opa src/examples/pubnub_chat.opa src/examples/pubnub_test.opa
+SRC = pubnub.opp src/plugin/pubnub.opa src/examples/pubnub_chat.opa
 
 all : pubnub opa
 
