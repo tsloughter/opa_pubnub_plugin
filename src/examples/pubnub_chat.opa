@@ -11,6 +11,14 @@ user_update(x) =
                     Dom.scroll_to_bottom(#conversation)
          | _ -> void
 
+user_update_2(x) =
+  match x with
+         | {Record = [("username", username), ("message", message)]} ->
+                    void
+         | {String = s}->
+                    void
+         | _ -> void
+
 broadcast(author, msg) =
    username : RPC.Json.json = {String = author}
    message : RPC.Json.json = {String = msg}
@@ -18,11 +26,16 @@ broadcast(author, msg) =
    do PubNub.publish("chat", record_json)
    Dom.clear_value(#entry)
 
+add_history(x: string) =
+  match Json.deserialize(x) with
+         | {some={List=history}} ->
+                  do List.iter(user_update_2, history)
+                  void
+         | _ -> void
+
 launch(author) =
    init_client() =
-     //PubNub.history("chat", 20, (history ->
-     //     history = List.rev(List.take(20, history))
-     //     do List.iter(user_update, history)
+     //do PubNub.history("chat", 20, (h -> add_history(h)))
      PubNub.subscribe("chat", (x -> user_update(x)))
    send_message() =
      broadcast(author, Dom.get_value(#entry))
