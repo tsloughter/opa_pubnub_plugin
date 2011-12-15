@@ -1,4 +1,6 @@
 // This is an Javascript file, containing opa preprocessing directives
+##extern-type llarray('a)
+//' Declare llarray as an external type
 
 ##register publish : string, string -> void
 ##args(c, m)
@@ -29,7 +31,8 @@
     return js_void;
 }
 
-##register history : string, int, (string -> void) -> void
+// Callback history doesn't take a string as argument but a low level javascript array
+##register history : string, int, (llarray(string) -> void) -> void
 ##args(channel, limit, callback)
 {
     PUBNUB.history({
