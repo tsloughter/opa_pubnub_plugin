@@ -26,16 +26,15 @@ broadcast(author, msg) =
    do PubNub.publish("chat", record_json)
    Dom.clear_value(#entry)
 
-add_history(x: string) =
-  match Json.deserialize(x) with
-         | {some={List=history}} ->
-                  do List.iter(user_update_2, history)
-                  void
-         | _ -> void
+add_history(history) =
+  LowLevelArray.iter(
+    elt -> user_update_2(Json.deserialize(elt) ? {String = elt})
+    , history
+  )
 
 launch(author) =
    init_client() =
-     //do PubNub.history("chat", 20, (h -> add_history(h)))
+     do PubNub.history("chat", 20, (h -> add_history(h)))
      PubNub.subscribe("chat", (x -> user_update(x)))
    send_message() =
      broadcast(author, Dom.get_value(#entry))
